@@ -111,36 +111,69 @@ func Create(rootDir string) {
 		}
 	})
 
-	isSearchMode := false
+	isSortMode := false
 
 	inputField := tview.NewInputField().
 		SetLabel("/").
 		SetFieldWidth(30)
 
-	var searchResults []*tview.TreeNode
+	var sortResults []*tview.TreeNode
 	var currentIndex int
 
-	updateNodeStyles := func() {
-		for _, node := range searchResults {
-			node.SetColor(tcell.ColorYellow)
-		}
-		if len(searchResults) > 0 {
-			searchResults[currentIndex].SetColor(tcell.ColorRed)
+	setDefaultNodeStyles := func() {
+		for _, node := range treeView.GetRoot().GetChildren() {
+			ref := node.GetReference()
+			if ref != nil {
+				path := ref.(string)
+				info, err := os.Stat(path)
+				if err == nil {
+					if info.IsDir() {
+						node.SetColor(tcell.ColorPink)
+					} else {
+						node.SetColor(tcell.ColorGreen)
+					}
+				}
+			}
 		}
 	}
 
-	search := func(query string) {
-		searchResults = []*tview.TreeNode{}
+	updateNodeStyles := func() {
+		setDefaultNodeStyles()
+		for _, node := range sortResults {
+			ref := node.GetReference()
+			if ref != nil {
+				path := ref.(string)
+				info, err := os.Stat(path)
+				if err == nil {
+					if info.IsDir() {
+						node.SetColor(tcell.ColorRed)
+					} else {
+						node.SetColor(tcell.ColorSpringGreen)
+					}
+				}
+			}
+		}
+		if len(sortResults) > 0 {
+			sortResults[currentIndex].SetColor(tcell.ColorRed)
+		}
+	}
+
+	sort := func(query string) {
+		if query == "" {
+			setDefaultNodeStyles()
+			return
+		}
+		sortResults = []*tview.TreeNode{}
 		currentIndex = 0
 		treeView.GetRoot().Walk(func(node, parent *tview.TreeNode) bool {
 			if strings.Contains(strings.ToLower(node.GetText()), strings.ToLower(query)) {
-				searchResults = append(searchResults, node)
+				sortResults = append(sortResults, node)
 			}
 			return true
 		})
 		updateNodeStyles()
-		if len(searchResults) > 0 {
-			treeView.SetCurrentNode(searchResults[currentIndex])
+		if len(sortResults) > 0 {
+			treeView.SetCurrentNode(sortResults[currentIndex])
 		}
 	}
 
@@ -163,7 +196,7 @@ func Create(rootDir string) {
 	}
 
 	inputField.SetChangedFunc(func(text string) {
-		search(text)
+		sort(text)
 	})
 
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -173,7 +206,7 @@ func Create(rootDir string) {
 				AddItem(treeView, 0, 1, true).
 				AddItem(inputField, 1, 1, false)
 			app.SetRoot(flex, true).SetFocus(inputField)
-			isSearchMode = true
+			isSortMode = true
 			return nil
 		} else if event.Key() == tcell.KeyEsc {
 			inputField.SetText("")
@@ -182,20 +215,20 @@ func Create(rootDir string) {
 				SetDirection(tview.FlexRow).
 				AddItem(treeView, 0, 1, true)
 			app.SetRoot(flex, true).SetFocus(treeView)
-			isSearchMode = false
+			isSortMode = false
 			return nil
-		} else if event.Key() == tcell.KeyUp && isSearchMode {
-			if len(searchResults) > 0 {
-				currentIndex = (currentIndex - 1 + len(searchResults)) % len(searchResults)
+		} else if event.Key() == tcell.KeyUp && isSortMode {
+			if len(sortResults) > 0 {
+				currentIndex = (currentIndex - 1 + len(sortResults)) % len(sortResults)
 				updateNodeStyles()
-				treeView.SetCurrentNode(searchResults[currentIndex])
+				treeView.SetCurrentNode(sortResults[currentIndex])
 			}
 			return nil
-		} else if event.Key() == tcell.KeyDown && isSearchMode {
-			if len(searchResults) > 0 {
-				currentIndex = (currentIndex + 1) % len(searchResults)
+		} else if event.Key() == tcell.KeyDown && isSortMode {
+			if len(sortResults) > 0 {
+				currentIndex = (currentIndex + 1) % len(sortResults)
 				updateNodeStyles()
-				treeView.SetCurrentNode(searchResults[currentIndex])
+				treeView.SetCurrentNode(sortResults[currentIndex])
 			}
 			return nil
 		} else if event.Key() == tcell.KeyEnter {

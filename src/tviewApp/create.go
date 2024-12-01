@@ -113,7 +113,7 @@ func Create(rootDir string) {
 
 	isSortMode := false
 
-	inputField := tview.NewInputField().
+	sortField := tview.NewInputField().
 		SetLabel("/").
 		SetFieldWidth(30)
 
@@ -195,7 +195,17 @@ func Create(rootDir string) {
 		})
 	}
 
-	inputField.SetChangedFunc(func(text string) {
+	sortField.SetChangedFunc(func(text string) {
+		sort(text)
+	})
+
+	isSearchMode := false
+
+	searchField := tview.NewInputField().
+		SetLabel("Search: ").
+		SetFieldWidth(30)
+
+	sortField.SetChangedFunc(func(text string) {
 		sort(text)
 	})
 
@@ -204,18 +214,28 @@ func Create(rootDir string) {
 			flex := tview.NewFlex().
 				SetDirection(tview.FlexRow).
 				AddItem(treeView, 0, 1, true).
-				AddItem(inputField, 1, 1, false)
-			app.SetRoot(flex, true).SetFocus(inputField)
+				AddItem(sortField, 1, 1, false)
+			app.SetRoot(flex, true).SetFocus(sortField)
 			isSortMode = true
 			return nil
+		} else if event.Key() == tcell.KeyCtrlF {
+			flex := tview.NewFlex().
+				SetDirection(tview.FlexRow).
+				AddItem(treeView, 0, 1, true).
+				AddItem(searchField, 1, 1, false)
+			app.SetRoot(flex, true).SetFocus(searchField)
+			isSearchMode = true
+			return nil
 		} else if event.Key() == tcell.KeyEsc {
-			inputField.SetText("")
+			sortField.SetText("")
+			searchField.SetText("")
 			resetNodeStyles()
 			flex := tview.NewFlex().
 				SetDirection(tview.FlexRow).
 				AddItem(treeView, 0, 1, true)
 			app.SetRoot(flex, true).SetFocus(treeView)
 			isSortMode = false
+			isSearchMode = false
 			return nil
 		} else if event.Key() == tcell.KeyUp && isSortMode {
 			if len(sortResults) > 0 {
@@ -230,6 +250,84 @@ func Create(rootDir string) {
 				updateNodeStyles()
 				treeView.SetCurrentNode(sortResults[currentIndex])
 			}
+			return nil
+		} else if event.Key() == tcell.KeyEnter && isSearchMode {
+			files, err := fstree.Find(rootPath, searchField.GetText())
+			if err != nil {
+				log.Printf("Failed to search: %v", err)
+				return event
+			}
+			headNode := tview.NewTreeNode("Results").
+				SetReference(rootPath)
+
+			for _, file := range files {
+				childNode := tview.NewTreeNode(file).
+					SetReference(file)
+
+				info, err := os.Stat(file)
+				if err != nil {
+					log.Printf("Failed to stat %s: %v", file, err)
+					continue
+				}
+
+				if info.IsDir() {
+					childNode.SetColor(tcell.ColorPink)
+				} else {
+					childNode.SetColor(tcell.ColorGreen)
+				}
+
+				childNode.Collapse()
+				headNode.AddChild(childNode)
+			}
+
+			findTreeView := tview.NewTreeView().
+				SetRoot(headNode).
+				SetCurrentNode(headNode)
+
+			findTreeView.SetSelectedFunc(func(node *tview.TreeNode) {
+				log.Printf("Selected %s\n", node.GetText())
+				ref := node.GetReference()
+				if ref == nil {
+					return
+				}
+
+				path := ref.(string)
+				info, err := os.Stat(path)
+				if err != nil {
+					log.Printf("Failed to access %s: %v", path, err)
+					return
+				}
+
+				if info.IsDir() {
+					newRootNode := tview.NewTreeNode(path).
+						SetReference(path)
+					fstree.Create(newRootNode, path)
+					treeView.SetRoot(newRootNode).
+						SetCurrentNode(newRootNode)
+
+					flex := tview.NewFlex().
+						SetDirection(tview.FlexRow).
+						AddItem(treeView, 0, 1, true)
+					app.SetRoot(flex, true).SetFocus(treeView)
+					isSortMode = false
+					isSearchMode = false
+				} else {
+					cmd := exec.Command("xdg-open", path)
+					err := cmd.Start()
+					if err != nil {
+						log.Printf("Failed to open file %s: %v", path, err)
+					}
+				}
+			})
+
+			sortField.SetText("")
+			searchField.SetText("")
+			flex := tview.NewFlex().
+				SetDirection(tview.FlexRow).
+				AddItem(findTreeView, 0, 1, true)
+			app.SetRoot(flex, true).SetFocus(findTreeView)
+			isSortMode = false
+			isSearchMode = false
 			return nil
 		} else if event.Key() == tcell.KeyEnter {
 			node := treeView.GetCurrentNode()

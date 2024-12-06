@@ -9,7 +9,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-func createSearchApp(mainApp *tview.Application, searchTreeView *tview.TreeView, rootDir string) {
+func createSearchApp(searchTreeView *tview.TreeView, rootDir string) {
 	searchApp := tview.NewApplication()
 
 	searchTreeView.SetSelectedFunc(func(node *tview.TreeNode) {

@@ -284,7 +284,7 @@ func CreateMainApp(rootDir string) {
 			sortField.SetText("")
 			searchField.SetText("")
 			app.Stop()
-			createSearchApp(app, findTreeView, rootPath)
+			createSearchApp(findTreeView, rootPath)
 			isSortMode = false
 			isSearchMode = false
 

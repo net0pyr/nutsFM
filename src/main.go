@@ -37,5 +37,5 @@ func main() {
 		}
 	}
 
-	tviewApp.Create(rootPath)
+	tviewApp.CreateMainApp(rootPath)
 }

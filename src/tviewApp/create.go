@@ -13,7 +13,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-func Create(rootDir string) {
+func CreateMainApp(rootDir string) {
 	app := tview.NewApplication()
 
 	var rootPath string
@@ -230,10 +230,7 @@ func Create(rootDir string) {
 			sortField.SetText("")
 			searchField.SetText("")
 			resetNodeStyles()
-			flex := tview.NewFlex().
-				SetDirection(tview.FlexRow).
-				AddItem(treeView, 0, 1, true)
-			app.SetRoot(flex, true).SetFocus(treeView)
+			app.SetRoot(treeView, true).SetFocus(treeView)
 			isSortMode = false
 			isSearchMode = false
 			return nil
@@ -284,50 +281,13 @@ func Create(rootDir string) {
 				SetRoot(headNode).
 				SetCurrentNode(headNode)
 
-			findTreeView.SetSelectedFunc(func(node *tview.TreeNode) {
-				log.Printf("Selected %s\n", node.GetText())
-				ref := node.GetReference()
-				if ref == nil {
-					return
-				}
-
-				path := ref.(string)
-				info, err := os.Stat(path)
-				if err != nil {
-					log.Printf("Failed to access %s: %v", path, err)
-					return
-				}
-
-				if info.IsDir() {
-					newRootNode := tview.NewTreeNode(path).
-						SetReference(path)
-					fstree.Create(newRootNode, path)
-					treeView.SetRoot(newRootNode).
-						SetCurrentNode(newRootNode)
-
-					flex := tview.NewFlex().
-						SetDirection(tview.FlexRow).
-						AddItem(treeView, 0, 1, true)
-					app.SetRoot(flex, true).SetFocus(treeView)
-					isSortMode = false
-					isSearchMode = false
-				} else {
-					cmd := exec.Command("xdg-open", path)
-					err := cmd.Start()
-					if err != nil {
-						log.Printf("Failed to open file %s: %v", path, err)
-					}
-				}
-			})
-
 			sortField.SetText("")
 			searchField.SetText("")
-			flex := tview.NewFlex().
-				SetDirection(tview.FlexRow).
-				AddItem(findTreeView, 0, 1, true)
-			app.SetRoot(flex, true).SetFocus(findTreeView)
+			app.Stop()
+			createSearchApp(app, findTreeView, rootPath)
 			isSortMode = false
 			isSearchMode = false
+
 			return nil
 		} else if event.Key() == tcell.KeyEnter {
 			node := treeView.GetCurrentNode()

@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/net0pyr/nutsFM/tviewApp"
+	"github.com/net0pyr/nutsFM/captures"
 )
 
 var logFile *os.File
@@ -37,5 +37,7 @@ func main() {
 		}
 	}
 
-	tviewApp.CreateMainApp(rootPath)
+	captures.CreateSearchApp = createSearchApp
+	captures.CreateMainApp = createMainApp
+	createMainApp(rootPath)
 }

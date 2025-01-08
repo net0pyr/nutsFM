@@ -23,7 +23,6 @@ func Find(startDir, query string) ([]string, error) {
 		defer wg.Done()
 		files, err := os.ReadDir(dir)
 		if err != nil {
-			// log.Printf("Failed to read directory %s: %v\n", dir, err)
 			return
 		}
 

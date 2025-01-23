@@ -12,6 +12,7 @@ var CreateMainApp func(rootDir string)
 var SearchApp *tview.Application
 var SearchTreeView *tview.TreeView
 var RootDir *string
+var Pages *tview.Pages
 
 var SortField = tview.NewInputField().
 	SetLabel("/").

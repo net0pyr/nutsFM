@@ -56,6 +56,8 @@ func createMainApp(rootDir string) {
 
 	treeView.SetInputCapture(captures.ViewCaptures)
 
+	pages.AddPage("main", treeView, true, true)
+
 	nodes.ResetNodeStyles()
 
 	captures.SortField.SetChangedFunc(func(text string) {
@@ -67,7 +69,7 @@ func createMainApp(rootDir string) {
 
 	app.SetInputCapture(captures.AppCaptures)
 
-	if err := app.SetRoot(treeView, true).Run(); err != nil {
+	if err := app.SetRoot(pages, true).Run(); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -9,11 +9,12 @@ import (
 )
 
 func SearchAppCaptures(event *tcell.EventKey) *tcell.EventKey {
-	if event.Key() == tcell.KeyEsc {
+	switch {
+	case event.Key() == tcell.KeyEsc:
 		SearchApp.Stop()
 		CreateMainApp(*RootDir)
 		return nil
-	} else if event.Key() == tcell.KeyEnter {
+	case event.Key() == tcell.KeyEnter:
 		node := SearchTreeView.GetCurrentNode()
 		if node == nil {
 			return event
@@ -41,6 +42,8 @@ func SearchAppCaptures(event *tcell.EventKey) *tcell.EventKey {
 				log.Printf("Failed to open file %s: %v", path, err)
 			}
 		}
+	default:
+		return event
 	}
 	return event
 }

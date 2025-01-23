@@ -10,11 +10,8 @@ import (
 )
 
 func ViewCaptures(event *tcell.EventKey) *tcell.EventKey {
-	if TreeView == nil {
-		return event
-	}
-	if event.Key() == tcell.KeyCtrlT {
-
+	switch {
+	case event.Key() == tcell.KeyCtrlT:
 		node := TreeView.GetCurrentNode()
 		if node == nil {
 			return event
@@ -42,6 +39,7 @@ func ViewCaptures(event *tcell.EventKey) *tcell.EventKey {
 			}
 		}
 		return nil
+	default:
+		return event
 	}
-	return event
 }

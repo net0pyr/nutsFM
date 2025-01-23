@@ -6,11 +6,14 @@ import (
 	"path/filepath"
 
 	"github.com/net0pyr/nutsFM/captures"
+	"github.com/rivo/tview"
 )
 
 var logFile *os.File
+var pages = tview.NewPages()
 
 func init() {
+	captures.Pages = pages
 	var err error
 	logFile, err = os.OpenFile("app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {

@@ -4,13 +4,17 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/user"
+	"strings"
 
 	"github.com/net0pyr/nutsFM/fstree"
+	"github.com/net0pyr/nutsFM/history"
 	"github.com/net0pyr/nutsFM/modalWindows"
 	"github.com/net0pyr/nutsFM/nodes"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"golang.org/x/term"
 )
 
 var isSearchMode, isSortMode = false, false
@@ -193,6 +197,133 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 
 		path := ref.(string)
 		modalWindows.ShowConfirmDeleteModal(path, node, App, Pages, TreeView)
+		return nil
+
+	case event.Key() == tcell.KeyRune && event.Rune() == ':':
+		currentUser, err := user.Current()
+		var userLabel string
+		if err != nil {
+			userLabel = "I don't know your name: "
+		} else {
+			userLabel = currentUser.Username + ": "
+		}
+
+		cmdInput := tview.NewInputField().
+			SetLabel(userLabel)
+
+		historyCommands := history.GetAll()
+		historyIndex := len(historyCommands)
+
+		outputView := tview.NewTextView().
+			SetWrap(true).
+			SetDynamicColors(true).
+			SetScrollable(true)
+
+		cmdInput.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+			switch {
+			case event.Key() == tcell.KeyTab:
+				App.SetFocus(outputView)
+				return nil
+
+			case event.Key() == tcell.KeyUp:
+				if historyIndex > 0 {
+					historyIndex--
+					cmdInput.SetText(historyCommands[historyIndex])
+				}
+				return nil
+
+			case event.Key() == tcell.KeyDown:
+				if historyIndex < len(historyCommands)-1 {
+					historyIndex++
+					cmdInput.SetText(historyCommands[historyIndex])
+				} else {
+					historyIndex = len(historyCommands)
+					cmdInput.SetText("")
+				}
+				return nil
+
+			default:
+				return event
+			}
+		})
+
+		cmdInput.SetDoneFunc(func(key tcell.Key) {
+			if key == tcell.KeyEnter {
+				root := TreeView.GetRoot()
+				if root == nil || root.GetReference() == nil {
+					return
+				}
+				dir := root.GetReference().(string)
+				userCmd := cmdInput.GetText()
+
+				history.AppendHistory(userCmd)
+
+				cmd := exec.Command("bash", "-c", userCmd)
+				cmd.Dir = dir
+				out, err := cmd.CombinedOutput()
+				output := string(out)
+				if err != nil {
+					output += "\nОшибка: " + err.Error()
+				}
+
+				outputView.SetText(output)
+
+				screenWidth, _, termErr := term.GetSize(int(os.Stdout.Fd()))
+				if termErr != nil || screenWidth < 1 {
+					screenWidth = 80
+				}
+
+				lines := 0
+				maxWidth := screenWidth
+				if maxWidth < 1 {
+					maxWidth = 1
+				}
+				for _, line := range strings.Split(output, "\n") {
+					lineLen := len(line)
+					if lineLen == 0 {
+						lines++
+						continue
+					}
+					linesNeeded := lineLen / maxWidth
+					if lineLen%maxWidth != 0 {
+						linesNeeded++
+					}
+					lines += linesNeeded
+				}
+
+				if lines < 1 {
+					lines = 1
+				}
+				if lines > 10 {
+					lines = 10
+				}
+
+				outputView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+					if event.Key() == tcell.KeyTab {
+						App.SetFocus(cmdInput)
+						return nil
+					}
+					return event
+				})
+
+				layout := tview.NewFlex().
+					SetDirection(tview.FlexRow).
+					AddItem(TreeView, 0, 1, false).
+					AddItem(cmdInput, 1, 1, false).
+					AddItem(outputView, lines, 1, false)
+
+				App.SetRoot(layout, true)
+				App.SetFocus(cmdInput)
+			}
+		})
+
+		bashFlex := tview.NewFlex().
+			SetDirection(tview.FlexRow).
+			AddItem(TreeView, 0, 1, false).
+			AddItem(cmdInput, 1, 1, true)
+
+		App.SetRoot(bashFlex, true)
+		App.SetFocus(cmdInput)
 		return nil
 
 	default:

@@ -306,6 +306,13 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 					return event
 				})
 
+				newRootNode := tview.NewTreeNode(dir).
+					SetReference(dir)
+				fstree.Create(newRootNode, dir)
+				TreeView.SetRoot(newRootNode).
+					SetCurrentNode(newRootNode)
+				nodes.ResetNodeStyles()
+
 				layout := tview.NewFlex().
 					SetDirection(tview.FlexRow).
 					AddItem(TreeView, 0, 1, false).

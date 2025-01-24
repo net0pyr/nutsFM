@@ -40,6 +40,5 @@ func Create(node *tview.TreeNode, path string) {
 
 		childNode.Collapse()
 		node.AddChild(childNode)
-
 	}
 }

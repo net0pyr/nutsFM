@@ -7,11 +7,13 @@ import (
 	"sync"
 )
 
+// Find выполняет поиск файлов и директорий, содержащих заданный запрос, начиная с указанной директории.
 func Find(startDir, query string) ([]string, error) {
 	var results []string
 	var wg sync.WaitGroup
 	fileChan := make(chan string)
 
+	// Горутин для сбора результатов поиска
 	go func() {
 		for file := range fileChan {
 			results = append(results, file)

@@ -8,6 +8,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// createSearchApp создает и запускает приложение поиска.
 func createSearchApp(searchTreeView *tview.TreeView, rootDir string) {
 	searchApp := tview.NewApplication()
 	captures.SearchApp = searchApp

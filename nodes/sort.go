@@ -6,6 +6,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// Sort выполняет сортировку узлов дерева файлов на основе заданного запроса.
 var Sort = func(query string) {
 	if query == "" {
 		SetDefaultNodeStyles()

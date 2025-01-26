@@ -9,6 +9,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
+// ViewCaptures обрабатывает события клавиатуры для представления дерева файлов.
 func ViewCaptures(event *tcell.EventKey) *tcell.EventKey {
 	switch {
 	case event.Key() == tcell.KeyCtrlT:
@@ -25,7 +26,7 @@ func ViewCaptures(event *tcell.EventKey) *tcell.EventKey {
 		path := ref.(string)
 		info, err := os.Stat(path)
 		if err != nil {
-			log.Printf("Failed to access %s: %v", path, err)
+			log.Printf("Не удалось получить доступ к %s: %v", path, err)
 			return event
 		}
 

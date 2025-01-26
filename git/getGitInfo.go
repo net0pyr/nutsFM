@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// GetGitInfo возвращает информацию о текущем состоянии Git-репозитория.
 func GetGitInfo(path string) (string, error) {
 	cmd := exec.Command("git", "-C", path, "status", "-sb")
 	output, err := cmd.Output()

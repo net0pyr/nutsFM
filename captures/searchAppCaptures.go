@@ -8,6 +8,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
+// SearchAppCaptures обрабатывает события клавиатуры для приложения поиска.
 func SearchAppCaptures(event *tcell.EventKey) *tcell.EventKey {
 	switch {
 	case event.Key() == tcell.KeyEsc:
@@ -28,7 +29,7 @@ func SearchAppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		path := ref.(string)
 		info, err := os.Stat(path)
 		if err != nil {
-			log.Printf("Failed to access %s: %v", path, err)
+			log.Printf("Не удалось получить доступ к %s: %v", path, err)
 			return event
 		}
 
@@ -39,7 +40,7 @@ func SearchAppCaptures(event *tcell.EventKey) *tcell.EventKey {
 			cmd := exec.Command("xdg-open", path)
 			err := cmd.Start()
 			if err != nil {
-				log.Printf("Failed to open file %s: %v", path, err)
+				log.Printf("Не удалось открыть файл %s: %v", path, err)
 			}
 		}
 	default:

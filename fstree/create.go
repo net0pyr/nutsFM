@@ -1,3 +1,4 @@
+// Пакет fstree предоставляет функции для работы с файловой системой в приложении nutsFM.
 package fstree
 
 import (
@@ -9,18 +10,21 @@ import (
 	"github.com/rivo/tview"
 )
 
+// Create создает дерево файлов и директорий для указанного пути.
 func Create(node *tview.TreeNode, path string) {
 	files, err := os.ReadDir(path)
 	if err != nil {
-		log.Printf("Failed to read directory %s: %v", path, err)
+		log.Printf("Не удалось прочитать директорию %s: %v", path, err)
 		return
 	}
 
+	// Добавляем узел для родительской директории
 	parentNode := tview.NewTreeNode("..").
 		SetReference(filepath.Join(path, ".."))
 	parentNode.SetColor(tcell.ColorPink)
 	node.AddChild(parentNode)
 
+	// Добавляем узлы для всех файлов и директорий в текущей директории
 	for _, file := range files {
 		childPath := filepath.Join(path, file.Name())
 		childNode := tview.NewTreeNode(file.Name()).
@@ -28,7 +32,7 @@ func Create(node *tview.TreeNode, path string) {
 
 		info, err := os.Stat(childPath)
 		if err != nil {
-			log.Printf("Failed to stat %s: %v", childPath, err)
+			log.Printf("Не удалось получить информацию о файле %s: %v", childPath, err)
 			continue
 		}
 

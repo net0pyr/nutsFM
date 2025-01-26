@@ -1,3 +1,7 @@
+// Пакет history предоставляет глобальные переменные для работы с историей команд в приложении nutsFM.
 package history
 
-var HistoryFile = "/home/net0pyr/nutsFM/commands_history"
+import "os"
+
+// HistoryFile представляет путь к файлу истории команд.
+var HistoryFile = os.Getenv("HOME") + "/.nutsfm/commands_history"

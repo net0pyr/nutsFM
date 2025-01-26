@@ -4,6 +4,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// ShowErrorModal отображает модальное окно с сообщением об ошибке.
 func ShowErrorModal(message string, app *tview.Application, pages *tview.Pages, treeView *tview.TreeView) {
 	errorModal := tview.NewModal().
 		SetText(message).

@@ -13,6 +13,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// createMainApp создает и запускает основное TUI-приложение.
 func createMainApp(rootDir string) {
 	app := tview.NewApplication()
 	captures.App = app
@@ -24,21 +25,21 @@ func createMainApp(rootDir string) {
 	if rootDir == "" {
 		rootPath, err = filepath.Abs(".")
 		if err != nil {
-			log.Fatalf("Failed to get absolute path: %v", err)
+			log.Fatalf("Не удалось получить абсолютный путь: %v", err)
 		}
 	} else {
 		rootPath, err = filepath.Abs(rootDir)
 		if err != nil {
-			log.Fatalf("Failed to get absolute path: %v", err)
+			log.Fatalf("Не удалось получить абсолютный путь: %v", err)
 		}
 
 		info, err := os.Stat(rootPath)
 		if os.IsNotExist(err) {
-			fmt.Printf("Directory does not exist: %s\n", rootPath)
+			fmt.Printf("Директория не существует: %s\n", rootPath)
 			return
 		}
 		if !info.IsDir() {
-			fmt.Printf("Not a directory: %s\n", rootPath)
+			fmt.Printf("Это не директория: %s\n", rootPath)
 			return
 		}
 	}

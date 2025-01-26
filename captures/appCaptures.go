@@ -23,9 +23,11 @@ var searchField = tview.NewInputField().
 	SetLabel("Search: ").
 	SetFieldWidth(30)
 
+// AppCaptures обрабатывает события клавиатуры для основного приложения.
 func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 	switch {
 	case event.Key() == tcell.KeyRune && event.Rune() == '/':
+		// Включить режим сортировки
 		flex := tview.NewFlex().
 			SetDirection(tview.FlexRow).
 			AddItem(TreeView, 0, 1, true).
@@ -35,6 +37,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 
 	case event.Key() == tcell.KeyCtrlF:
+		// Включить режим поиска
 		flex := tview.NewFlex().
 			SetDirection(tview.FlexRow).
 			AddItem(TreeView, 0, 1, true).
@@ -44,6 +47,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 
 	case event.Key() == tcell.KeyEsc:
+		// Выйти из режима сортировки или поиска
 		SortField.SetText("")
 		searchField.SetText("")
 		nodes.ResetNodeStyles()
@@ -53,6 +57,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 
 	case event.Key() == tcell.KeyUp && isSortMode:
+		// Перемещение вверх в режиме сортировки
 		if len(nodes.SortResults) > 0 {
 			nodes.CurrentIndex = (nodes.CurrentIndex - 1 + len(nodes.SortResults)) % len(nodes.SortResults)
 			nodes.UpdateNodeStyles()
@@ -61,6 +66,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 
 	case event.Key() == tcell.KeyDown && isSortMode:
+		// Перемещение вниз в режиме сортировки
 		if len(nodes.SortResults) > 0 {
 			nodes.CurrentIndex = (nodes.CurrentIndex + 1) % len(nodes.SortResults)
 			nodes.UpdateNodeStyles()
@@ -69,9 +75,10 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 
 	case event.Key() == tcell.KeyEnter && isSearchMode:
+		// Выполнение поиска
 		files, err := fstree.Find(*RootPath, searchField.GetText())
 		if err != nil {
-			log.Printf("Failed to search: %v", err)
+			log.Printf("Не удалось выполнить поиск: %v", err)
 			modalWindows.ShowErrorModal("Ошибка поиска: "+err.Error(), App, Pages, TreeView)
 			return event
 		}
@@ -84,7 +91,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 
 			info, err := os.Stat(file)
 			if err != nil {
-				log.Printf("Failed to stat %s: %v", file, err)
+				log.Printf("Не удалось получить информацию о %s: %v", file, err)
 				continue
 			}
 
@@ -112,6 +119,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 
 	case event.Key() == tcell.KeyEnter:
+		// Открытие директории или файла
 		if App.GetFocus() != TreeView {
 			return event
 		}
@@ -129,7 +137,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		path := ref.(string)
 		info, err := os.Stat(path)
 		if err != nil {
-			log.Printf("Failed to access %s: %v", path, err)
+			log.Printf("Не удалось получить доступ к %s: %v", path, err)
 			modalWindows.ShowErrorModal("Ошибка поиска: "+err.Error(), App, Pages, TreeView)
 			return event
 		}
@@ -145,13 +153,14 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 			cmd := exec.Command("xdg-open", path)
 			err := cmd.Start()
 			if err != nil {
-				log.Printf("Failed to open file %s: %v", path, err)
+				log.Printf("Не удалось открыть файл %s: %v", path, err)
 				modalWindows.ShowErrorModal("Ошибка поиска: "+err.Error(), App, Pages, TreeView)
 			}
 		}
 		return nil
 
 	case event.Key() == tcell.KeyCtrlT:
+		// Раскрытие/свертывание текущей директории
 		node := TreeView.GetCurrentNode()
 		if node == nil {
 			return event
@@ -165,7 +174,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		path := ref.(string)
 		info, err := os.Stat(path)
 		if err != nil {
-			log.Printf("Failed to access %s: %v", path, err)
+			log.Printf("Не удалось получить доступ к %s: %v", path, err)
 			modalWindows.ShowErrorModal("Ошибка поиска: "+err.Error(), App, Pages, TreeView)
 			return event
 		}
@@ -182,6 +191,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 
 	case event.Key() == tcell.KeyDelete:
+		// Удаление текущего элемента
 		log.Println("Нажата клавиша Delete")
 		node := TreeView.GetCurrentNode()
 		if node == nil {
@@ -200,6 +210,7 @@ func AppCaptures(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 
 	case event.Key() == tcell.KeyRune && event.Rune() == ':':
+		// Ввод команды bash
 		currentUser, err := user.Current()
 		var userLabel string
 		if err != nil {

@@ -1,0 +1,51 @@
+package captures // import "github.com/net0pyr/nutsFM/captures"
+
+Пакет captures содержит глобальные переменные и функции для приложения nutsFM.
+
+VARIABLES
+
+var App *tview.Application
+    App представляет основное TUI-приложение.
+
+var CreateMainApp func(rootDir string)
+    CreateMainApp функция для создания и запуска основного приложения.
+
+var CreateSearchApp func(searchTreeView *tview.TreeView, rootDir string)
+    CreateSearchApp функция для создания и запуска приложения поиска.
+
+var Pages *tview.Pages
+    Pages представляет страницы приложения.
+
+var RootDir *string
+    RootDir хранит путь к корневой директории для поиска.
+
+var RootPath *string
+    RootPath хранит путь к корневой директории.
+
+var SearchApp *tview.Application
+    SearchApp представляет приложение поиска.
+
+var SearchTreeView *tview.TreeView
+    SearchTreeView представляет дерево файлов в приложении поиска.
+
+var SortField = tview.NewInputField().
+	SetLabel("/").
+	SetFieldWidth(30)
+    SortField представляет поле ввода для сортировки.
+
+var TreeView *tview.TreeView
+    TreeView представляет текущее дерево файлов.
+
+
+FUNCTIONS
+
+func AppCaptures(event *tcell.EventKey) *tcell.EventKey
+    AppCaptures обрабатывает события клавиатуры для основного приложения.
+
+func SearchAppCaptures(event *tcell.EventKey) *tcell.EventKey
+    SearchAppCaptures обрабатывает события клавиатуры для приложения поиска.
+
+func ViewCaptures(event *tcell.EventKey) *tcell.EventKey
+    ViewCaptures обрабатывает события клавиатуры для представления дерева
+    файлов.
+

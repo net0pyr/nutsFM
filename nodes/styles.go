@@ -7,6 +7,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// SetDefaultNodeStyles устанавливает стили по умолчанию для узлов дерева файлов.
 func SetDefaultNodeStyles() {
 	for _, node := range TreeView.GetRoot().GetChildren() {
 		ref := node.GetReference()
@@ -24,6 +25,7 @@ func SetDefaultNodeStyles() {
 	}
 }
 
+// UpdateNodeStyles обновляет стили узлов дерева файлов в соответствии с результатами сортировки.
 func UpdateNodeStyles() {
 	SetDefaultNodeStyles()
 	for _, node := range SortResults {
@@ -45,6 +47,7 @@ func UpdateNodeStyles() {
 	}
 }
 
+// ResetNodeStyles сбрасывает стили узлов дерева файлов к значениям по умолчанию.
 func ResetNodeStyles() {
 	TreeView.GetRoot().Walk(func(node, parent *tview.TreeNode) bool {
 		ref := node.GetReference()

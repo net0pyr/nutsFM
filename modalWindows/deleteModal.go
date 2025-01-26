@@ -1,3 +1,4 @@
+// Пакет modalWindows предоставляет функции для отображения модальных окон в приложении nutsFM.
 package modalWindows
 
 import (
@@ -11,6 +12,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// ShowConfirmDeleteModal отображает модальное окно подтверждения удаления.
 func ShowConfirmDeleteModal(path string, node *tview.TreeNode, app *tview.Application, pages *tview.Pages, treeView *tview.TreeView) {
 	log.Println("Вызов showConfirmDeleteModal")
 	confirmModal := tview.NewModal().
@@ -42,6 +44,7 @@ func ShowConfirmDeleteModal(path string, node *tview.TreeNode, app *tview.Applic
 	log.Println("Модальное окно подтверждения удаления отображено и фокус установлен на него")
 }
 
+// getParentNode возвращает родительский узел для указанного узла.
 func getParentNode(root, target *tview.TreeNode) *tview.TreeNode {
 	for _, child := range root.GetChildren() {
 		if child == target {
@@ -54,6 +57,7 @@ func getParentNode(root, target *tview.TreeNode) *tview.TreeNode {
 	return nil
 }
 
+// authenticateWithPam выполняет аутентификацию с использованием PAM.
 func authenticateWithPam(user, password string) error {
 	t, err := pam.StartFunc("sudo", user, func(s pam.Style, msg string) (string, error) {
 		switch s {
@@ -69,6 +73,7 @@ func authenticateWithPam(user, password string) error {
 	return t.Authenticate(0)
 }
 
+// promptSudoPassword отображает форму ввода пароля sudo.
 func promptSudoPassword(path string, node *tview.TreeNode, app *tview.Application, treeView *tview.TreeView, pages *tview.Pages) {
 	log.Println("Вызов promptSudoPassword")
 	passwordField := tview.NewInputField().
@@ -105,6 +110,7 @@ func promptSudoPassword(path string, node *tview.TreeNode, app *tview.Applicatio
 	log.Println("Форма ввода пароля отображена и фокус установлен на нее")
 }
 
+// showWrongPasswordModal отображает модальное окно ошибки ввода пароля.
 func showWrongPasswordModal(path string, node *tview.TreeNode, app *tview.Application, pages *tview.Pages, treeView *tview.TreeView) {
 	log.Println("Вызов showWrongPasswordModal")
 	modal := tview.NewModal().
@@ -127,6 +133,7 @@ func showWrongPasswordModal(path string, node *tview.TreeNode, app *tview.Applic
 	log.Println("Модальное окно ошибки ввода пароля отображено и фокус установлен на него")
 }
 
+// removeNodeFromTree удаляет узел из дерева.
 func removeNodeFromTree(node *tview.TreeNode, treeView *tview.TreeView) {
 	parent := getParentNode(treeView.GetRoot(), node)
 	if parent != nil {

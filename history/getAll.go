@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// GetAll возвращает все команды из файла истории команд.
 func GetAll() []string {
 	var commands []string
 	f, err := os.Open(HistoryFile)

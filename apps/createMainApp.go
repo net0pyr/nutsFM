@@ -1,4 +1,4 @@
-package main
+package apps
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 )
 
 // createMainApp создает и запускает основное TUI-приложение.
-func createMainApp(rootDir string) {
+func CreateMainApp(rootDir string) {
 	app := tview.NewApplication()
 	captures.App = app
 
@@ -57,7 +57,7 @@ func createMainApp(rootDir string) {
 
 	treeView.SetInputCapture(captures.ViewCaptures)
 
-	pages.AddPage("main", treeView, true, true)
+	Pages.AddPage("main", treeView, true, true)
 
 	nodes.ResetNodeStyles()
 
@@ -70,7 +70,7 @@ func createMainApp(rootDir string) {
 
 	app.SetInputCapture(captures.AppCaptures)
 
-	if err := app.SetRoot(pages, true).Run(); err != nil {
+	if err := app.SetRoot(Pages, true).Run(); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -1,4 +1,4 @@
-package main
+package apps
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 )
 
 // createSearchApp создает и запускает приложение поиска.
-func createSearchApp(searchTreeView *tview.TreeView, rootDir string) {
+func CreateSearchApp(searchTreeView *tview.TreeView, rootDir string) {
 	searchApp := tview.NewApplication()
 	captures.SearchApp = searchApp
 	captures.RootDir = &rootDir

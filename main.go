@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/net0pyr/nutsFM/apps"
 	"github.com/net0pyr/nutsFM/captures"
 	"github.com/rivo/tview"
 )
@@ -46,7 +47,8 @@ func main() {
 		}
 	}
 
-	captures.CreateSearchApp = createSearchApp
-	captures.CreateMainApp = createMainApp
-	createMainApp(rootPath)
+	captures.CreateSearchApp = apps.CreateSearchApp
+	captures.CreateMainApp = apps.CreateMainApp
+	apps.Pages = pages
+	apps.CreateMainApp(rootPath)
 }

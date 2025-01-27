@@ -1,0 +1,209 @@
+<!DOCTYPE html><html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="theme-color" content="#375EAB"/>
+
+  <title>modalWindows - nutsFM  Documentation</title>
+
+
+
+
+
+
+
+
+
+
+<link type="text/css" rel="stylesheet" href="../../../../../lib/style.css"/></head>
+<body>
+
+<div id="lowframe" style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="../../../../../">nutsFM  Documentation</a></div>
+<div class="top-heading" id="heading-narrow"><a href="../../../../../">nutsFM  Documentation</a></div>
+<!--<a href="#" id="menu-button"><span id="menu-button-arrow">▽</span></a>-->
+<div id="menu">
+<a href="../../../../../" style="margin-right: 10px;">Package Index</a>
+</div>
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Source file
+    <a href="/src">src</a>/<a href="../../../../../src/github.com.html">github.com</a>/<a href="../../../../../src/github.com/net0pyr">net0pyr</a>/<a href="../../../../../src/github.com/net0pyr/nutsFM">nutsFM</a>/<a href="../../../../../src/github.com/net0pyr/nutsFM/modalWindows">modalWindows</a>/<span class="text-muted">deleteModal.go</span>
+  </h1>
+
+
+
+
+
+  <h2>
+    Documentation: <a href="../../../../../github.com/net0pyr/nutsFM/modalWindows">github.com/net0pyr/nutsFM/modalWindows</a>
+  </h2>
+
+
+
+<div id="nav"></div>
+
+
+
+<pre><span id="L1" class="ln">     1  </span><span class="comment">// Пакет modalWindows предоставляет инструменты для отображения модальных окон в приложении nutsFM.</span>
+<span id="L2" class="ln">     2  </span>package modalWindows
+<span id="L3" class="ln">     3  </span>
+<span id="L4" class="ln">     4  </span>import (
+<span id="L5" class="ln">     5  </span>	&#34;log&#34;
+<span id="L6" class="ln">     6  </span>	&#34;os&#34;
+<span id="L7" class="ln">     7  </span>	&#34;os/exec&#34;
+<span id="L8" class="ln">     8  </span>	&#34;strings&#34;
+<span id="L9" class="ln">     9  </span>
+<span id="L10" class="ln">    10  </span>	&#34;github.com/gdamore/tcell/v2&#34;
+<span id="L11" class="ln">    11  </span>	&#34;github.com/msteinert/pam&#34;
+<span id="L12" class="ln">    12  </span>	&#34;github.com/rivo/tview&#34;
+<span id="L13" class="ln">    13  </span>)
+<span id="L14" class="ln">    14  </span>
+<span id="L15" class="ln">    15  </span><span class="comment">// ShowConfirmDeleteModal отображает модальное окно подтверждения удаления.</span>
+<span id="L16" class="ln">    16  </span>func ShowConfirmDeleteModal(path string, node *tview.TreeNode, app *tview.Application, pages *tview.Pages, treeView *tview.TreeView) {
+<span id="L17" class="ln">    17  </span>	log.Println(&#34;Вызов showConfirmDeleteModal&#34;)
+<span id="L18" class="ln">    18  </span>	confirmModal := tview.NewModal().
+<span id="L19" class="ln">    19  </span>		SetText(&#34;Вы уверены, что хотите удалить:\n&#34; + path + &#34;?&#34;).
+<span id="L20" class="ln">    20  </span>		AddButtons([]string{&#34;Да&#34;, &#34;Нет&#34;}).
+<span id="L21" class="ln">    21  </span>		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+<span id="L22" class="ln">    22  </span>			log.Println(&#34;Закрытие модального окна подтверждения удаления&#34;)
+<span id="L23" class="ln">    23  </span>			pages.RemovePage(&#34;confirmDeleteModal&#34;)
+<span id="L24" class="ln">    24  </span>			if buttonLabel == &#34;Да&#34; {
+<span id="L25" class="ln">    25  </span>				err := os.RemoveAll(path)
+<span id="L26" class="ln">    26  </span>				if err != nil {
+<span id="L27" class="ln">    27  </span>					if strings.Contains(err.Error(), &#34;permission denied&#34;) {
+<span id="L28" class="ln">    28  </span>						promptSudoPassword(path, node, app, treeView, pages)
+<span id="L29" class="ln">    29  </span>						return
+<span id="L30" class="ln">    30  </span>					}
+<span id="L31" class="ln">    31  </span>					log.Printf(&#34;Failed to delete %s: %v&#34;, path, err)
+<span id="L32" class="ln">    32  </span>					ShowErrorModal(&#34;Ошибка поиска: &#34;+err.Error(), app, pages, treeView)
+<span id="L33" class="ln">    33  </span>					return
+<span id="L34" class="ln">    34  </span>				}
+<span id="L35" class="ln">    35  </span>				removeNodeFromTree(node, treeView)
+<span id="L36" class="ln">    36  </span>			}
+<span id="L37" class="ln">    37  </span>			app.SetRoot(treeView, true)
+<span id="L38" class="ln">    38  </span>			app.SetFocus(treeView)
+<span id="L39" class="ln">    39  </span>		})
+<span id="L40" class="ln">    40  </span>
+<span id="L41" class="ln">    41  </span>	pages.AddPage(&#34;confirmDeleteModal&#34;, confirmModal, true, true)
+<span id="L42" class="ln">    42  </span>	app.SetRoot(pages, true)
+<span id="L43" class="ln">    43  </span>	app.SetFocus(confirmModal)
+<span id="L44" class="ln">    44  </span>	log.Println(&#34;Модальное окно подтверждения удаления отображено и фокус установлен на него&#34;)
+<span id="L45" class="ln">    45  </span>}
+<span id="L46" class="ln">    46  </span>
+<span id="L47" class="ln">    47  </span><span class="comment">// getParentNode возвращает родительский узел для указанного узла.</span>
+<span id="L48" class="ln">    48  </span>func getParentNode(root, target *tview.TreeNode) *tview.TreeNode {
+<span id="L49" class="ln">    49  </span>	for _, child := range root.GetChildren() {
+<span id="L50" class="ln">    50  </span>		if child == target {
+<span id="L51" class="ln">    51  </span>			return root
+<span id="L52" class="ln">    52  </span>		}
+<span id="L53" class="ln">    53  </span>		if p := getParentNode(child, target); p != nil {
+<span id="L54" class="ln">    54  </span>			return p
+<span id="L55" class="ln">    55  </span>		}
+<span id="L56" class="ln">    56  </span>	}
+<span id="L57" class="ln">    57  </span>	return nil
+<span id="L58" class="ln">    58  </span>}
+<span id="L59" class="ln">    59  </span>
+<span id="L60" class="ln">    60  </span><span class="comment">// authenticateWithPam выполняет аутентификацию с использованием PAM.</span>
+<span id="L61" class="ln">    61  </span>func authenticateWithPam(user, password string) error {
+<span id="L62" class="ln">    62  </span>	t, err := pam.StartFunc(&#34;sudo&#34;, user, func(s pam.Style, msg string) (string, error) {
+<span id="L63" class="ln">    63  </span>		switch s {
+<span id="L64" class="ln">    64  </span>		case pam.PromptEchoOff, pam.PromptEchoOn:
+<span id="L65" class="ln">    65  </span>			return password, nil
+<span id="L66" class="ln">    66  </span>		default:
+<span id="L67" class="ln">    67  </span>			return &#34;&#34;, nil
+<span id="L68" class="ln">    68  </span>		}
+<span id="L69" class="ln">    69  </span>	})
+<span id="L70" class="ln">    70  </span>	if err != nil {
+<span id="L71" class="ln">    71  </span>		return err
+<span id="L72" class="ln">    72  </span>	}
+<span id="L73" class="ln">    73  </span>	return t.Authenticate(0)
+<span id="L74" class="ln">    74  </span>}
+<span id="L75" class="ln">    75  </span>
+<span id="L76" class="ln">    76  </span><span class="comment">// promptSudoPassword отображает форму ввода пароля sudo.</span>
+<span id="L77" class="ln">    77  </span>func promptSudoPassword(path string, node *tview.TreeNode, app *tview.Application, treeView *tview.TreeView, pages *tview.Pages) {
+<span id="L78" class="ln">    78  </span>	log.Println(&#34;Вызов promptSudoPassword&#34;)
+<span id="L79" class="ln">    79  </span>	passwordField := tview.NewInputField().
+<span id="L80" class="ln">    80  </span>		SetLabel(&#34;Введите пароль sudo (PAM): &#34;).
+<span id="L81" class="ln">    81  </span>		SetMaskCharacter(&#39;*&#39;)
+<span id="L82" class="ln">    82  </span>	passwordField.
+<span id="L83" class="ln">    83  </span>		SetDoneFunc(func(key tcell.Key) {
+<span id="L84" class="ln">    84  </span>			if key == tcell.KeyEnter {
+<span id="L85" class="ln">    85  </span>				pass := passwordField.GetText()
+<span id="L86" class="ln">    86  </span>				if err := authenticateWithPam(&#34;net0pyr&#34;, pass); err != nil {
+<span id="L87" class="ln">    87  </span>					log.Printf(&#34;Ошибка аутентификации PAM: %v&#34;, err)
+<span id="L88" class="ln">    88  </span>					showWrongPasswordModal(path, node, app, pages, treeView)
+<span id="L89" class="ln">    89  </span>					return
+<span id="L90" class="ln">    90  </span>				}
+<span id="L91" class="ln">    91  </span>				cmd := exec.Command(&#34;sudo&#34;, &#34;-S&#34;, &#34;rm&#34;, &#34;-rf&#34;, path)
+<span id="L92" class="ln">    92  </span>				cmd.Stdin = strings.NewReader(pass + &#34;\n&#34;)
+<span id="L93" class="ln">    93  </span>				if err := cmd.Run(); err != nil {
+<span id="L94" class="ln">    94  </span>					log.Printf(&#34;Ошибка удаления через sudo %s: %v&#34;, path, err.Error())
+<span id="L95" class="ln">    95  </span>					showWrongPasswordModal(path, node, app, pages, treeView)
+<span id="L96" class="ln">    96  </span>					return
+<span id="L97" class="ln">    97  </span>				}
+<span id="L98" class="ln">    98  </span>				removeNodeFromTree(node, treeView)
+<span id="L99" class="ln">    99  </span>				app.SetRoot(treeView, true)
+<span id="L100" class="ln">   100  </span>				app.SetFocus(treeView)
+<span id="L101" class="ln">   101  </span>			}
+<span id="L102" class="ln">   102  </span>		})
+<span id="L103" class="ln">   103  </span>	layout := tview.NewFlex().
+<span id="L104" class="ln">   104  </span>		SetDirection(tview.FlexRow).
+<span id="L105" class="ln">   105  </span>		AddItem(treeView, 0, 3, false).
+<span id="L106" class="ln">   106  </span>		AddItem(passwordField, 1, 1, true)
+<span id="L107" class="ln">   107  </span>
+<span id="L108" class="ln">   108  </span>	app.SetRoot(layout, true)
+<span id="L109" class="ln">   109  </span>	app.SetFocus(passwordField)
+<span id="L110" class="ln">   110  </span>	log.Println(&#34;Форма ввода пароля отображена и фокус установлен на нее&#34;)
+<span id="L111" class="ln">   111  </span>}
+<span id="L112" class="ln">   112  </span>
+<span id="L113" class="ln">   113  </span><span class="comment">// showWrongPasswordModal отображает модальное окно ошибки ввода пароля.</span>
+<span id="L114" class="ln">   114  </span>func showWrongPasswordModal(path string, node *tview.TreeNode, app *tview.Application, pages *tview.Pages, treeView *tview.TreeView) {
+<span id="L115" class="ln">   115  </span>	log.Println(&#34;Вызов showWrongPasswordModal&#34;)
+<span id="L116" class="ln">   116  </span>	modal := tview.NewModal().
+<span id="L117" class="ln">   117  </span>		SetText(&#34;Пароль неверный&#34;).
+<span id="L118" class="ln">   118  </span>		AddButtons([]string{&#34;Отмена&#34;, &#34;Ввести заново&#34;}).
+<span id="L119" class="ln">   119  </span>		SetDoneFunc(func(i int, label string) {
+<span id="L120" class="ln">   120  </span>			log.Println(&#34;Закрытие модального окна ошибки ввода пароля&#34;)
+<span id="L121" class="ln">   121  </span>			pages.RemovePage(&#34;wrongPassModal&#34;)
+<span id="L122" class="ln">   122  </span>			if label == &#34;Ввести заново&#34; {
+<span id="L123" class="ln">   123  </span>				promptSudoPassword(path, node, app, treeView, pages)
+<span id="L124" class="ln">   124  </span>				return
+<span id="L125" class="ln">   125  </span>			}
+<span id="L126" class="ln">   126  </span>			app.SetRoot(treeView, true)
+<span id="L127" class="ln">   127  </span>			app.SetFocus(treeView)
+<span id="L128" class="ln">   128  </span>		})
+<span id="L129" class="ln">   129  </span>
+<span id="L130" class="ln">   130  </span>	pages.AddPage(&#34;wrongPassModal&#34;, modal, true, true)
+<span id="L131" class="ln">   131  </span>	app.SetRoot(pages, true)
+<span id="L132" class="ln">   132  </span>	app.SetFocus(modal)
+<span id="L133" class="ln">   133  </span>	log.Println(&#34;Модальное окно ошибки ввода пароля отображено и фокус установлен на него&#34;)
+<span id="L134" class="ln">   134  </span>}
+<span id="L135" class="ln">   135  </span>
+<span id="L136" class="ln">   136  </span><span class="comment">// removeNodeFromTree удаляет узел из дерева.</span>
+<span id="L137" class="ln">   137  </span>func removeNodeFromTree(node *tview.TreeNode, treeView *tview.TreeView) {
+<span id="L138" class="ln">   138  </span>	parent := getParentNode(treeView.GetRoot(), node)
+<span id="L139" class="ln">   139  </span>	if parent != nil {
+<span id="L140" class="ln">   140  </span>		parent.RemoveChild(node)
+<span id="L141" class="ln">   141  </span>	}
+<span id="L142" class="ln">   142  </span>}
+<span id="L143" class="ln">   143  </span>
+</pre><p><a href="../../../../../src/github.com/net0pyr/nutsFM/modalWindows/deleteModal.go.html?m=text">View as plain text</a></p>
+
+<div id="footer"><a href="../../../../../docs.zip">Download docs.zip</a> to browse offline - Generated by <a href="https://godoc.org/golang.org/x/tools/godoc" target="_blank">godoc</a> + <a href="https://code.rocket9labs.com/tslocum/godoc-static" target="_blank">godoc-static</a></div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+
+
+</body></html>

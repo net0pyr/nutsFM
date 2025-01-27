@@ -1,0 +1,252 @@
+<!DOCTYPE html><html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="theme-color" content="#375EAB"/>
+
+  <title>captures - nutsFM  Documentation</title>
+
+
+
+
+
+
+
+
+
+
+<link type="text/css" rel="stylesheet" href="../../../../lib/style.css"/></head>
+<body>
+
+<div id="lowframe" style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="../../../../">nutsFM  Documentation</a></div>
+<div class="top-heading" id="heading-narrow"><a href="../../../../">nutsFM  Documentation</a></div>
+<!--<a href="#" id="menu-button"><span id="menu-button-arrow">▽</span></a>-->
+<div id="menu">
+<a href="../../../../" style="margin-right: 10px;">Package Index</a>
+</div>
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package captures
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import &#34;<a href="https://github.com/net0pyr/nutsFM/tree/master/captures" target="_blank">github.com/net0pyr/nutsFM/captures</a>&#34;</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Пакет captures содержит необходимые горячие клавиши для приложения nutsFM.
+
+				
+			</p></div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+				<dd><a href="#pkg-variables">Variables</a></dd>
+			
+			
+				
+				<dd><a href="#AppCaptures">func AppCaptures(event *tcell.EventKey) *tcell.EventKey</a></dd>
+			
+				
+				<dd><a href="#SearchAppCaptures">func SearchAppCaptures(event *tcell.EventKey) *tcell.EventKey</a></dd>
+			
+				
+				<dd><a href="#ViewCaptures">func ViewCaptures(event *tcell.EventKey) *tcell.EventKey</a></dd>
+			
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="../../../../src/github.com/net0pyr/nutsFM/captures/appCaptures.go.html">appCaptures.go</a>
+			
+				<a href="../../../../src/github.com/net0pyr/nutsFM/captures/globals.go.html">globals.go</a>
+			
+				<a href="../../../../src/github.com/net0pyr/nutsFM/captures/searchAppCaptures.go.html">searchAppCaptures.go</a>
+			
+				<a href="../../../../src/github.com/net0pyr/nutsFM/captures/viewCaptures.go.html">viewCaptures.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+			<h2 id="pkg-variables">Variables</h2>
+			
+				<p>App представляет основное TUI-приложение.
+
+				</p><pre>var <span id="App">App</span> *<a href="../../../../github.com/rivo/tview/">tview</a>.<a href="../../../../github.com/rivo/tview/#Application">Application</a></pre>
+			
+				<p>CreateMainApp функция для создания и запуска основного приложения.
+
+				</p><pre>var <span id="CreateMainApp">CreateMainApp</span> func(rootDir <a href="../../../../builtin/#string">string</a>)</pre>
+			
+				<p>CreateSearchApp функция для создания и запуска приложения поиска.
+
+				</p><pre>var <span id="CreateSearchApp">CreateSearchApp</span> func(searchTreeView *<a href="../../../../github.com/rivo/tview/">tview</a>.<a href="../../../../github.com/rivo/tview/#TreeView">TreeView</a>, rootDir <a href="../../../../builtin/#string">string</a>)</pre>
+			
+				<p>Pages представляет страницы приложения.
+
+				</p><pre>var <span id="Pages">Pages</span> *<a href="../../../../github.com/rivo/tview/">tview</a>.<a href="../../../../github.com/rivo/tview/#Pages">Pages</a></pre>
+			
+				<p>RootDir хранит путь к корневой директории для поиска.
+
+				</p><pre>var <span id="RootDir">RootDir</span> *<a href="../../../../builtin/#string">string</a></pre>
+			
+				<p>RootPath хранит путь к корневой директории.
+
+				</p><pre>var <span id="RootPath">RootPath</span> *<a href="../../../../builtin/#string">string</a></pre>
+			
+				<p>SearchApp представляет приложение поиска.
+
+				</p><pre>var <span id="SearchApp">SearchApp</span> *<a href="../../../../github.com/rivo/tview/">tview</a>.<a href="../../../../github.com/rivo/tview/#Application">Application</a></pre>
+			
+				<p>SearchTreeView представляет дерево файлов в приложении поиска.
+
+				</p><pre>var <span id="SearchTreeView">SearchTreeView</span> *<a href="../../../../github.com/rivo/tview/">tview</a>.<a href="../../../../github.com/rivo/tview/#TreeView">TreeView</a></pre>
+			
+				<p>SortField представляет поле ввода для сортировки.
+
+				</p><pre>var <span id="SortField">SortField</span> = <a href="../../../../github.com/rivo/tview/">tview</a>.<a href="../../../../github.com/rivo/tview/#NewInputField">NewInputField</a>().
+    <a href="#SetLabel">SetLabel</a>(&#34;/&#34;).
+    <a href="#SetFieldWidth">SetFieldWidth</a>(30)</pre>
+			
+				<p>TreeView представляет текущее дерево файлов.
+
+				</p><pre>var <span id="TreeView">TreeView</span> *<a href="../../../../github.com/rivo/tview/">tview</a>.<a href="../../../../github.com/rivo/tview/#TreeView">TreeView</a></pre>
+			
+		
+		
+			
+			
+			<h2 id="AppCaptures">func <a href="../../../../src/github.com/net0pyr/nutsFM/captures/appCaptures.go.html?s=558:613#L17">AppCaptures</a>
+				<a class="permalink" href="#AppCaptures">¶</a>
+				
+				
+			</h2>
+			<pre>func AppCaptures(event *tcell.<a href="#EventKey">EventKey</a>) *tcell.<a href="#EventKey">EventKey</a></pre>
+			<p>AppCaptures обрабатывает события клавиатуры для основного приложения.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="SearchAppCaptures">func <a href="../../../../src/github.com/net0pyr/nutsFM/captures/searchAppCaptures.go.html?s=210:271#L2">SearchAppCaptures</a>
+				<a class="permalink" href="#SearchAppCaptures">¶</a>
+				
+				
+			</h2>
+			<pre>func SearchAppCaptures(event *tcell.<a href="#EventKey">EventKey</a>) *tcell.<a href="#EventKey">EventKey</a></pre>
+			<p>SearchAppCaptures обрабатывает события клавиатуры для приложения поиска.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="ViewCaptures">func <a href="../../../../src/github.com/net0pyr/nutsFM/captures/viewCaptures.go.html?s=250:306#L3">ViewCaptures</a>
+				<a class="permalink" href="#ViewCaptures">¶</a>
+				
+				
+			</h2>
+			<pre>func ViewCaptures(event *tcell.<a href="#EventKey">EventKey</a>) *tcell.<a href="#EventKey">EventKey</a></pre>
+			<p>ViewCaptures обрабатывает события клавиатуры для представления дерева файлов.
+
+			
+			
+
+		
+		
+	
+
+	
+
+
+
+
+
+
+
+</p><div id="footer"><a href="../../../../docs.zip">Download docs.zip</a> to browse offline - Generated by <a href="https://godoc.org/golang.org/x/tools/godoc" target="_blank">godoc</a> + <a href="https://code.rocket9labs.com/tslocum/godoc-static" target="_blank">godoc-static</a></div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+
+
+</body></html>

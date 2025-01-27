@@ -1,0 +1,121 @@
+<!DOCTYPE html><html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="theme-color" content="#375EAB"/>
+
+  <title>nutsFM - nutsFM  Documentation</title>
+
+
+
+
+
+
+
+
+
+
+<link type="text/css" rel="stylesheet" href="../../../../lib/style.css"/></head>
+<body>
+
+<div id="lowframe" style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="../../../../">nutsFM  Documentation</a></div>
+<div class="top-heading" id="heading-narrow"><a href="../../../../">nutsFM  Documentation</a></div>
+<!--<a href="#" id="menu-button"><span id="menu-button-arrow">▽</span></a>-->
+<div id="menu">
+<a href="../../../../" style="margin-right: 10px;">Package Index</a>
+</div>
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Source file
+    <a href="/src">src</a>/<a href="../../../../src/github.com.html">github.com</a>/<a href="../../../../src/github.com/net0pyr">net0pyr</a>/<a href="../../../../src/github.com/net0pyr/nutsFM">nutsFM</a>/<span class="text-muted">main.go</span>
+  </h1>
+
+
+
+
+
+  <h2>
+    Documentation: <a href="../../../../github.com/net0pyr/nutsFM">github.com/net0pyr/nutsFM</a>
+  </h2>
+
+
+
+<div id="nav"></div>
+
+
+
+<pre><span id="L1" class="ln">     1  </span><span class="comment">// Пакет main является точкой входа для приложения nutsFM.</span>
+<span id="L2" class="ln">     2  </span>package main
+<span id="L3" class="ln">     3  </span>
+<span id="L4" class="ln">     4  </span>import (
+<span id="L5" class="ln">     5  </span>	&#34;log&#34;
+<span id="L6" class="ln">     6  </span>	&#34;os&#34;
+<span id="L7" class="ln">     7  </span>	&#34;path/filepath&#34;
+<span id="L8" class="ln">     8  </span>
+<span id="L9" class="ln">     9  </span>	&#34;github.com/net0pyr/nutsFM/apps&#34;
+<span id="L10" class="ln">    10  </span>	&#34;github.com/net0pyr/nutsFM/captures&#34;
+<span id="L11" class="ln">    11  </span>	&#34;github.com/rivo/tview&#34;
+<span id="L12" class="ln">    12  </span>)
+<span id="L13" class="ln">    13  </span>
+<span id="L14" class="ln">    14  </span><span class="comment">// logFile представляет файл журнала для записи логов.</span>
+<span id="L15" class="ln">    15  </span>var logFile *os.File
+<span id="L16" class="ln">    16  </span>
+<span id="L17" class="ln">    17  </span><span class="comment">// pages представляет страницы приложения.</span>
+<span id="L18" class="ln">    18  </span>var pages = tview.NewPages()
+<span id="L19" class="ln">    19  </span>
+<span id="L20" class="ln">    20  </span><span class="comment">// init инициализирует приложение, настраивая логирование и страницы.</span>
+<span id="L21" class="ln">    21  </span>func init() {
+<span id="L22" class="ln">    22  </span>	captures.Pages = pages
+<span id="L23" class="ln">    23  </span>	var err error
+<span id="L24" class="ln">    24  </span>	logFile, err = os.OpenFile(os.Getenv(&#34;HOME&#34;)+&#34;/.nutsfm/app.log&#34;, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+<span id="L25" class="ln">    25  </span>	if err != nil {
+<span id="L26" class="ln">    26  </span>		log.Fatal(err)
+<span id="L27" class="ln">    27  </span>	}
+<span id="L28" class="ln">    28  </span>	log.SetOutput(logFile)
+<span id="L29" class="ln">    29  </span>}
+<span id="L30" class="ln">    30  </span>
+<span id="L31" class="ln">    31  </span><span class="comment">// main является точкой входа приложения. Он настраивает корневой путь и запускает основное приложение.</span>
+<span id="L32" class="ln">    32  </span>func main() {
+<span id="L33" class="ln">    33  </span>	defer logFile.Close()
+<span id="L34" class="ln">    34  </span>
+<span id="L35" class="ln">    35  </span>	var rootPath string
+<span id="L36" class="ln">    36  </span>	var err error
+<span id="L37" class="ln">    37  </span>
+<span id="L38" class="ln">    38  </span>	if len(os.Args) &gt; 1 {
+<span id="L39" class="ln">    39  </span>		rootPath, err = filepath.Abs(os.Args[1])
+<span id="L40" class="ln">    40  </span>		if err != nil {
+<span id="L41" class="ln">    41  </span>			log.Fatalf(&#34;Не удалось получить абсолютный путь: %v&#34;, err)
+<span id="L42" class="ln">    42  </span>		}
+<span id="L43" class="ln">    43  </span>	} else {
+<span id="L44" class="ln">    44  </span>		rootPath, err = filepath.Abs(&#34;.&#34;)
+<span id="L45" class="ln">    45  </span>		if err != nil {
+<span id="L46" class="ln">    46  </span>			log.Fatalf(&#34;Не удалось получить абсолютный путь: %v&#34;, err)
+<span id="L47" class="ln">    47  </span>		}
+<span id="L48" class="ln">    48  </span>	}
+<span id="L49" class="ln">    49  </span>
+<span id="L50" class="ln">    50  </span>	captures.CreateSearchApp = apps.CreateSearchApp
+<span id="L51" class="ln">    51  </span>	captures.CreateMainApp = apps.CreateMainApp
+<span id="L52" class="ln">    52  </span>	apps.Pages = pages
+<span id="L53" class="ln">    53  </span>	apps.CreateMainApp(rootPath)
+<span id="L54" class="ln">    54  </span>}
+<span id="L55" class="ln">    55  </span>
+</pre><p><a href="../../../../src/github.com/net0pyr/nutsFM/main.go.html?m=text">View as plain text</a></p>
+
+<div id="footer"><a href="../../../../docs.zip">Download docs.zip</a> to browse offline - Generated by <a href="https://godoc.org/golang.org/x/tools/godoc" target="_blank">godoc</a> + <a href="https://code.rocket9labs.com/tslocum/godoc-static" target="_blank">godoc-static</a></div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+
+
+</body></html>
